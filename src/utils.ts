@@ -40,7 +40,7 @@ export function sortItems(items: Item[]): Item[] {
       return (
         GlueSchema.options.indexOf(a.glue) - GlueSchema.options.indexOf(b.glue)
       );
-    return a.content - b.content;
+    return b.content - a.content;
   });
 }
 
