@@ -6,23 +6,22 @@ import {
   type Item,
 } from "./schemas";
 
-export const GradingExportGrades = [
-  Grade.BBCC,
-  Grade["UT-B"],
-  Grade["UT-E"],
-  Grade["UTY+"],
-  Grade["UT-L-DGE"],
-  Grade.DE,
-  Grade.EF,
-];
-
 export const StbjExportGrades = [
   Grade.BBCC,
   Grade["UT-B"],
   Grade["UT-E"],
   Grade["UTY+"],
+  Grade.A,
+  Grade.B,
   Grade.DE,
   Grade.EF,
+];
+
+export const GradingExportGrades = [
+  ...StbjExportGrades,
+  Grade["UT-L-DGE"],
+  Grade.C,
+  Grade.FF,
 ];
 
 export function sortItems(items: Item[]): Item[] {

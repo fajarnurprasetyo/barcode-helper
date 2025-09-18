@@ -1,9 +1,6 @@
 import { Divider, List as MuiList, Stack } from "@mui/material";
 import { Fragment, useMemo } from "react";
-import {
-  type Grade,
-  type Item
-} from "../../schemas";
+import { type Grade, type Item } from "../../schemas";
 import { sortItems } from "../../utils";
 import ListItem from "./ListItem";
 import ListItemTotal from "./ListItemTotal";

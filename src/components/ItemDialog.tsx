@@ -54,6 +54,7 @@ export default function ItemDialog(
               maxDigits={2}
               decimalPlaces={1}
               variant="filled"
+              disableContextMenu
               value={state.thick}
               label="Thickness (mm)"
               onChange={(_, thick) =>
@@ -70,7 +71,14 @@ export default function ItemDialog(
               options={WoodSchema.options}
               onChange={(_, wood) => setState((state) => ({ ...state, wood }))}
               renderInput={(params) => {
-                return <TextField {...params} label="Wood" variant="filled" />;
+                return (
+                  <TextField
+                    {...params}
+                    label="Wood"
+                    variant="filled"
+                    disableContextMenu
+                  />
+                );
               }}
             />
           </Grid>
@@ -85,7 +93,14 @@ export default function ItemDialog(
                 setState((state) => ({ ...state, grade }))
               }
               renderInput={(params) => {
-                return <TextField {...params} label="Grade" variant="filled" />;
+                return (
+                  <TextField
+                    {...params}
+                    label="Grade"
+                    variant="filled"
+                    disableContextMenu
+                  />
+                );
               }}
             />
           </Grid>
@@ -98,7 +113,14 @@ export default function ItemDialog(
               options={GlueSchema.options}
               onChange={(_, glue) => setState((state) => ({ ...state, glue }))}
               renderInput={(params) => {
-                return <TextField {...params} label="Glue" variant="filled" />;
+                return (
+                  <TextField
+                    {...params}
+                    label="Glue"
+                    variant="filled"
+                    disableContextMenu
+                  />
+                );
               }}
             />
           </Grid>
@@ -110,6 +132,7 @@ export default function ItemDialog(
               maxDigits={3}
               variant="filled"
               decimalPlaces={0}
+              disableContextMenu
               value={state.content}
               label="Content (pcs)"
               onChange={(_, content) =>

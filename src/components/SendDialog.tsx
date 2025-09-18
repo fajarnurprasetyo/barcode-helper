@@ -4,6 +4,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -45,13 +46,16 @@ export default function SendDialog(
             closeOnSelect
             label="Date"
             value={date}
+            format="DD/MM/YYYY"
             onChange={(date) => {
               if (date) setDate(date);
             }}
+            // slots={{ textField: TextField }}
             slotProps={{
               textField: {
                 size: "small",
                 variant: "filled",
+                onContextMenu: (e) => e.preventDefault(),
               },
             }}
           />
@@ -69,6 +73,7 @@ export default function SendDialog(
             >
               {Shift.group.map((group) => (
                 <FormControlLabel
+                  key={group}
                   control={<Radio />}
                   value={group}
                   label={group}
@@ -91,6 +96,7 @@ export default function SendDialog(
               >
                 {Shift.number.map((number) => (
                   <FormControlLabel
+                    key={number}
                     control={<Radio />}
                     value={number}
                     label={number}
@@ -100,6 +106,7 @@ export default function SendDialog(
             </FormControl>
           ) : (
             <Fragment>
+              <Divider />
               <NumberField
                 autoSelect
                 disableContextMenu

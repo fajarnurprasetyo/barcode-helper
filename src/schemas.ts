@@ -15,10 +15,13 @@ export enum Grade {
   "UT-E" = "EXP",
   "UTY+" = "UTY+",
   "UT-L-DGE" = "UTY-L",
+  A = "Grd A",
+  B = "Grd B",
   DE = "D/E",
   EF = "E/F",
   "UT-L" = "UTY",
   "UT-1" = "UT-1",
+  C = "Grd C",
   FF = "F/F",
   "UT-2" = "UT-2",
 }
