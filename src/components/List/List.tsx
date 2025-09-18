@@ -41,7 +41,7 @@ export function List({
 
   return (
     <Stack height={1}>
-      <MuiList disablePadding sx={{ flex: 1, overflow: "auto" }}>
+      <MuiList disablePadding sx={{ mb: "-1px", flex: 1, overflow: "auto" }}>
         {localItems.map((item, index) => (
           <Fragment key={index}>
             <ListItem
