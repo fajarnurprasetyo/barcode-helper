@@ -144,7 +144,7 @@ export default function SendDialog(
         <Button onClick={() => props.onClose(null)}>Cancel</Button>
         <Button
           variant="contained"
-          disabled={shift.group !== "ALL" || !shift.number}
+          disabled={!shift.group || (shift.group !== "ALL" && !shift.number)}
           onClick={() =>
             props.onClose({ shift, date, utyPlus, reject, rejectRsv })
           }
