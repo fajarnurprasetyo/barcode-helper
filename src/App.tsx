@@ -139,7 +139,13 @@ function App() {
         <Tab label="STBJ" />
       </Tabs>
       <Divider />
-      <Box flexGrow={1} minHeight={0}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          minHeight: 0,
+          overscrollBehavior: "none",
+        }}
+      >
         {tab === 0 && (
           <List
             items={items}
