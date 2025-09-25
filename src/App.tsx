@@ -1,4 +1,4 @@
-import { Add, Send } from "@mui/icons-material";
+import { Add, Copy } from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -85,12 +85,7 @@ function App() {
     [dialogs, deleteItem]
   );
 
-  const handleSend = useCallback(async () => {
-    if (!navigator.share) {
-      alert("Web Share API is not supported in this browser.");
-      return;
-    }
-
+  const handleCopy = useCallback(async () => {
     const result = await dialogs.open(SendDialog);
 
     if (result) {
@@ -107,9 +102,7 @@ function App() {
         text += `\n*Reject+Rsv = ${result.rejectRsv.toFixed(2)}%*`;
       }
 
-      const data = { text, title: "Send Report" };
-
-      await navigator.share(data);
+      await navigator.clipboard.writeText(text);
     }
   }, [dialogs, items, grading, stbj]);
 
@@ -124,8 +117,8 @@ function App() {
             <IconButton color="inherit" onClick={handleAddItem}>
               <Add />
             </IconButton>
-            <IconButton color="inherit" onClick={handleSend}>
-              <Send />
+            <IconButton color="inherit" onClick={handleCopy}>
+              <Copy />
             </IconButton>
           </Stack>
         </Toolbar>
