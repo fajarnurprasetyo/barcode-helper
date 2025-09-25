@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useDialogs } from "@toolpad/core";
+import { useDialogs, useNotifications } from "@toolpad/core";
 import { useCallback, useState } from "react";
 import ItemDialog from "./components/ItemDialog";
 import { List } from "./components/List";
@@ -50,6 +50,7 @@ function itemsToText(title: string, items: Item[], values: Map<Item, number>) {
 
 function App() {
   const dialogs = useDialogs();
+  const notifications = useNotifications();
 
   const [tab, setTab] = useState(0);
 
@@ -102,7 +103,13 @@ function App() {
         text += `\n*Reject+Rsv = ${result.rejectRsv.toFixed(2)}%*`;
       }
 
-      await navigator.clipboard.writeText(text);
+      try {
+        await navigator.clipboard.writeText(text);
+        notifications.show(
+          "Content successfully copied to clipboard.",
+          {severity: "success", autoHideDuration: 3000},
+        )
+      } catch {}
     }
   }, [dialogs, items, grading, stbj]);
 
