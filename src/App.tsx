@@ -1,4 +1,4 @@
-import { Add, Copy } from "@mui/icons-material";
+import { Add, ContentCopy } from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -118,7 +118,7 @@ function App() {
               <Add />
             </IconButton>
             <IconButton color="inherit" onClick={handleCopy}>
-              <Copy />
+              <ContentCopy />
             </IconButton>
           </Stack>
         </Toolbar>
