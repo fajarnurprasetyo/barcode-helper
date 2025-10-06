@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import { useDialogs, useNotifications } from "@toolpad/core";
 import { useCallback, useState } from "react";
+import CopyDialog from "./components/CopyDialog";
 import ItemDialog from "./components/ItemDialog";
 import { List } from "./components/List";
-import SendDialog from "./components/SendDialog";
 import type { Item } from "./schemas";
 import useAppState from "./useAppState";
 import {
@@ -87,7 +87,7 @@ function App() {
   );
 
   const handleCopy = useCallback(async () => {
-    const result = await dialogs.open(SendDialog);
+    const result = await dialogs.open(CopyDialog);
 
     if (result) {
       let text = `@ ${result.date.format("DD-MM-YYYY")}*`;
@@ -109,9 +109,15 @@ function App() {
           "Content successfully copied to clipboard.",
           {severity: "success", autoHideDuration: 3000},
         )
-      } catch {}
+      } catch (err) {
+        console.error(err);
+        notifications.show(
+          "Failed to copy content to clipboard. Please try again.",
+          {severity: "error"},
+        )
+      }
     }
-  }, [dialogs, items, grading, stbj]);
+  }, [dialogs, notifications, items, grading, stbj]);
 
   return (
     <Stack height="100dvh">

@@ -28,7 +28,7 @@ export interface SendDialogResult {
   rejectRsv: number;
 }
 
-export default function SendDialog(
+export default function CopyDialog(
   props: DialogProps<unknown, SendDialogResult | null>
 ) {
   const [date, setDate] = useState(() => dayjs().subtract(16, "hour"));
@@ -39,7 +39,7 @@ export default function SendDialog(
 
   return (
     <Dialog fullWidth disableRestoreFocus open={props.open}>
-      <DialogTitle>Send Report</DialogTitle>
+      <DialogTitle>Copy Report</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <MobileDatePicker
@@ -149,7 +149,7 @@ export default function SendDialog(
             props.onClose({ shift, date, utyPlus, reject, rejectRsv })
           }
         >
-          Send
+          Copy
         </Button>
       </DialogActions>
     </Dialog>
