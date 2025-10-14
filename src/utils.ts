@@ -15,13 +15,13 @@ export const StbjExportGrades = [
   Grade.B,
   Grade.DE,
   Grade.EF,
+  Grade.FF,
 ];
 
 export const GradingExportGrades = [
   ...StbjExportGrades,
   Grade["UT-L-DGE"],
   Grade.C,
-  Grade.FF,
 ];
 
 export function sortItems(items: Item[]): Item[] {
