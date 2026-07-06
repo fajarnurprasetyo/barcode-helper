@@ -8,20 +8,20 @@ import {
 
 export const StbjExportGrades = [
   Grade.BBCC,
-  Grade["UT-B"],
-  Grade["UT-E"],
-  Grade["UTY+"],
-  Grade.A,
-  Grade.B,
-  Grade.DE,
-  Grade.EF,
-  Grade.FF,
+  Grade.Better,
+  Grade.Export,
+  Grade.Plus,
+  Grade.GrdA,
+  Grade.GrdB,
+  Grade.GrdC,
+  Grade.D_E,
+  Grade.E_F,
+  Grade.F_F,
 ];
 
 export const GradingExportGrades = [
   ...StbjExportGrades,
-  Grade["UT-L-DGE"],
-  Grade.C,
+  Grade.LocalDge,
 ];
 
 export function sortItems(items: Item[]): Item[] {

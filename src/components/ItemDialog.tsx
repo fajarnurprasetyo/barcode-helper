@@ -1,14 +1,16 @@
 import {
   Autocomplete,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   Grid,
 } from "@mui/material";
 import type { DialogProps } from "@toolpad/core";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Glue,
   GlueSchema,
@@ -19,6 +21,7 @@ import {
   WoodSchema,
   type Item,
 } from "../schemas";
+import { StbjExportGrades } from "../utils";
 import NumberField from "./NumberField";
 import TextField from "./TextField";
 
@@ -26,34 +29,41 @@ const defaultState: Item = {
   thick: 0,
   wood: Wood.TN,
   grade: Grade.BBCC,
+  export: false,
   glue: Glue.M,
   content: 0,
 };
 
 export default function ItemDialog(
-  props: DialogProps<Item | null, Item | null>
+  props: DialogProps<Item | null, Item | null>,
 ) {
   const [state, setState] = useState<Item>(() => ({
     ...defaultState,
     ...props.payload,
   }));
 
-  const isValid = useMemo(() => ItemSchema.safeParse(state).success, [state]);
-
   return (
-    <Dialog fullWidth disableRestoreFocus open={props.open}>
-      <DialogTitle>Add Item</DialogTitle>
+    <Dialog
+      fullWidth
+      component="form"
+      open={props.open}
+      disableRestoreFocus
+      onSubmit={(event) => {
+        event.preventDefault();
+        props.onClose(ItemSchema.parse(state));
+      }}
+    >
+      <DialogTitle sx={{ userSelect: "none" }}>Add Item</DialogTitle>
       <DialogContent>
-        <Grid container spacing={1}>
+        <Grid container pt={1} spacing={2}>
           <Grid size={12}>
             <NumberField
               fullWidth
               autoFocus
               autoSelect
-              size="small"
               maxDigits={2}
               decimalPlaces={1}
-              variant="filled"
+              // variant="filled"
               disableContextMenu
               value={state.thick}
               label="Thickness (mm)"
@@ -65,72 +75,63 @@ export default function ItemDialog(
           <Grid size={6}>
             <Autocomplete
               fullWidth
-              size="small"
               disableClearable
               value={state.wood}
               options={WoodSchema.options}
               onChange={(_, wood) => setState((state) => ({ ...state, wood }))}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label="Wood"
-                    variant="filled"
-                    disableContextMenu
-                  />
-                );
-              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Wood" disableContextMenu />
+              )}
             />
           </Grid>
           <Grid size={6}>
             <Autocomplete
               fullWidth
-              size="small"
               disableClearable
               value={state.grade}
               options={GradeSchema.options}
               onChange={(_, grade) =>
-                setState((state) => ({ ...state, grade }))
+                setState((state) => ({
+                  ...state,
+                  grade,
+                  export: StbjExportGrades.includes(grade),
+                }))
               }
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label="Grade"
-                    variant="filled"
-                    disableContextMenu
-                  />
-                );
-              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Grade" disableContextMenu />
+              )}
+            />
+          </Grid>
+          <Grid size={6} />
+          <Grid size={6}>
+            <FormControlLabel
+              label="Export"
+              control={<Checkbox />}
+              sx={{ userSelect: "none" }}
+              disabled={StbjExportGrades.includes(state.grade)}
+              checked={state.export}
+              onChange={(_, checked) =>
+                setState((state) => ({ ...state, export: checked }))
+              }
             />
           </Grid>
           <Grid size={6}>
             <Autocomplete
               fullWidth
-              size="small"
               disableClearable
               value={state.glue}
               options={GlueSchema.options}
               onChange={(_, glue) => setState((state) => ({ ...state, glue }))}
-              renderInput={(params) => {
-                return (
-                  <TextField
-                    {...params}
-                    label="Glue"
-                    variant="filled"
-                    disableContextMenu
-                  />
-                );
-              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Glue" disableContextMenu />
+              )}
             />
           </Grid>
           <Grid size={6}>
             <NumberField
               fullWidth
               autoSelect
-              size="small"
               maxDigits={3}
-              variant="filled"
               decimalPlaces={0}
               disableContextMenu
               value={state.content}
@@ -143,13 +144,11 @@ export default function ItemDialog(
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onClose(null)}>Cancel</Button>
-        <Button
-          variant="contained"
-          disabled={!isValid}
-          onClick={() => props.onClose(ItemSchema.parse(state))}
-        >
-          Add
+        <Button color="inherit" onClick={() => props.onClose(null)}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={!ItemSchema.safeParse(state).success}>
+          Submit
         </Button>
       </DialogActions>
     </Dialog>
