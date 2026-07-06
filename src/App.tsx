@@ -11,18 +11,24 @@ import {
   Typography,
 } from "@mui/material";
 import { useDialogs, useNotifications } from "@toolpad/core";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CopyDialog from "./components/CopyDialog";
 import ItemDialog from "./components/ItemDialog";
 import { List } from "./components/List";
-import type { Item } from "./schemas";
-import useAppState from "./useAppState";
+import { ItemFromStringSchema, ItemToStringSchema, type Item } from "./schemas";
 import {
   GradingExportGrades,
   sortItems,
   StbjExportGrades,
   sumItems,
 } from "./utils";
+
+function storeItems(items: Item[]) {
+  const value = JSON.stringify(
+    items.map((item) => ItemToStringSchema.parse(item)),
+  );
+  window.localStorage.setItem("items", value);
+}
 
 function itemsToText(title: string, items: Item[], values: Map<Item, number>) {
   let text = `*${title}*`;
@@ -51,25 +57,72 @@ function itemsToText(title: string, items: Item[], values: Map<Item, number>) {
 function App() {
   const dialogs = useDialogs();
   const notifications = useNotifications();
-
   const [tab, setTab] = useState(0);
 
-  const {
-    items,
-    lastItem,
-    addItem,
-    // updateItem,
-    deleteItem,
-    grading,
-    setGrading,
-    stbj,
-    setStbj,
-  } = useAppState();
+  const [items, setItems] = useState<Item[]>([]);
+  const [lastItem, setLastItem] = useState<Item | null>(null);
+
+  const [grading, setGrading] = useState<Map<Item, number>>(new Map());
+  const [stbj, setStbj] = useState<Map<Item, number>>(new Map());
 
   const handleAddItem = useCallback(async () => {
     const item = await dialogs.open(ItemDialog, lastItem);
-    if (item) addItem(item);
-  }, [dialogs, lastItem, addItem]);
+    if (!item) return;
+
+    const key = ItemToStringSchema.parse(item);
+    if (!items.some((it) => ItemToStringSchema.parse(it) === key)) {
+      setItems((items) => {
+        const newItems = [...items, item];
+        storeItems(newItems);
+        return newItems;
+      });
+
+      setGrading((prev) => {
+        const map = new Map(prev);
+        map.set(item, 0);
+        return map;
+      });
+
+      setStbj((prev) => {
+        const map = new Map(prev);
+        map.set(item, 0);
+        return map;
+      });
+
+      setLastItem(item);
+    }
+  }, [dialogs, items, lastItem]);
+
+  const handleEditItem = useCallback(
+    async (item: Item) => {
+      const update = await dialogs.open(ItemDialog, item);
+      if (!update) return;
+
+      const index = items.findIndex((it) => it === item);
+      if (index === -1) return;
+
+      setItems((items) => {
+        const newItems = [...items];
+        newItems[index] = update;
+        return newItems;
+      });
+
+      setGrading((prev) => {
+        const map = new Map(prev);
+        map.delete(item);
+        map.set(update, prev.get(item) ?? 0);
+        return map;
+      });
+
+      setStbj((prev) => {
+        const map = new Map(prev);
+        map.delete(item);
+        map.set(update, prev.get(item) ?? 0);
+        return map;
+      });
+    },
+    [dialogs, items],
+  );
 
   const handleDeleteItem = useCallback(
     async (item: Item) => {
@@ -79,12 +132,56 @@ function App() {
           title: "Delete Item",
           okText: "Delete",
           severity: "error",
-        }
+        },
       );
-      if (confirmed) deleteItem(item);
+      if (!confirmed) return;
+
+      const index = items.findIndex((it) => it === item);
+      if (index === -1) return;
+
+      setItems((items) => {
+        const newItems = [...items];
+        newItems.splice(index, 1);
+        storeItems(newItems);
+        return newItems;
+      });
+
+      setGrading((prev) => {
+        const map = new Map(prev);
+        map.delete(item);
+        return map;
+      });
+
+      setStbj((prev) => {
+        const map = new Map(prev);
+        map.delete(item);
+        return map;
+      });
     },
-    [dialogs, deleteItem]
+    [dialogs, items],
   );
+
+  useEffect(() => {
+    const storedItems = window.localStorage.getItem("items");
+    if (storedItems) {
+      try {
+        const parsed: Item[] = JSON.parse(storedItems)
+          .map((data: string) => ItemFromStringSchema.safeParse(data).data)
+          .filter(Boolean);
+
+        setItems(parsed);
+        setGrading(new Map(parsed.map((item) => [item, 0] as [Item, number])));
+        setStbj(new Map(parsed.map((item) => [item, 0] as [Item, number])));
+      } catch (error) {
+        console.error("Failed to parse stored items", error);
+      }
+    }
+
+    // window.addEventListener("storage", handleStorageChange);
+    return () => {
+      // window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const handleCopy = useCallback(async () => {
     const result = await dialogs.open(CopyDialog);
@@ -105,16 +202,16 @@ function App() {
 
       try {
         await navigator.clipboard.writeText(text);
-        notifications.show(
-          "Content successfully copied to clipboard.",
-          {severity: "success", autoHideDuration: 3000},
-        )
+        notifications.show("Content successfully copied to clipboard.", {
+          severity: "success",
+          autoHideDuration: 3000,
+        });
       } catch (err) {
         console.error(err);
         notifications.show(
           "Failed to copy content to clipboard. Please try again.",
-          {severity: "error"},
-        )
+          { severity: "error" },
+        );
       }
     }
   }, [dialogs, notifications, items, grading, stbj]);
@@ -151,6 +248,7 @@ function App() {
             items={items}
             values={grading}
             exportGrades={GradingExportGrades}
+            onItemEditClick={handleEditItem}
             onItemDeleteClick={handleDeleteItem}
             onChange={(item, value) =>
               setGrading((prev) => {
@@ -166,6 +264,7 @@ function App() {
             items={items}
             values={stbj}
             exportGrades={StbjExportGrades}
+            onItemEditClick={handleEditItem}
             onItemDeleteClick={handleDeleteItem}
             onChange={(item, value) =>
               setStbj((prev) => {

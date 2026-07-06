@@ -10,7 +10,7 @@ export interface ListProps {
   values: Map<Item, number>;
   exportGrades: Grade[];
   onChange: (item: Item, value: number) => void;
-  // onItemClick: (item: Item) => void;
+  onItemEditClick: (item: Item) => void;
   onItemDeleteClick: (item: Item) => void;
 }
 
@@ -19,7 +19,7 @@ export function List({
   values,
   exportGrades,
   onChange,
-  // onItemClick,
+  onItemEditClick,
   onItemDeleteClick,
 }: ListProps) {
   const [localItems, exportItems] = useMemo(
@@ -27,13 +27,15 @@ export function List({
       items
         .reduce(
           (result, item) => {
-            result[exportGrades.includes(item.grade) ? 1 : 0].push(item);
+            result[
+              item.export || exportGrades.includes(item.grade) ? 1 : 0
+            ].push(item);
             return result;
           },
-          [[], []] as [Item[], Item[]]
+          [[], []] as [Item[], Item[]],
         )
         .map(sortItems),
-    [items, exportGrades]
+    [items, exportGrades],
   );
 
   return (
@@ -45,6 +47,7 @@ export function List({
               item={item}
               value={values.get(item)}
               onChange={onChange}
+              onItemEditClick={onItemEditClick}
               onItemDeleteClick={onItemDeleteClick}
             />
             <Divider />
@@ -58,6 +61,7 @@ export function List({
               item={item}
               value={values.get(item)}
               onChange={onChange}
+              onItemEditClick={onItemEditClick}
               onItemDeleteClick={onItemDeleteClick}
             />
             <Divider />
