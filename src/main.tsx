@@ -6,7 +6,7 @@ import { TourProvider, type StepType } from "@reactour/tour";
 import { DialogsProvider, NotificationsProvider } from "@toolpad/core";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import { Auth } from "./Auth.tsx";
 import theme from "./theme.ts";
 
 const steps: StepType[] = [];
@@ -19,11 +19,11 @@ createRoot(document.getElementById("root")!).render(
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DialogsProvider>
             <NotificationsProvider>
-              <App />
+              <Auth />
             </NotificationsProvider>
           </DialogsProvider>
         </LocalizationProvider>
       </TourProvider>
     </ThemeProvider>
-  </StrictMode>
+  </StrictMode>,
 );
