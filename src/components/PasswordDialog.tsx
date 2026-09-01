@@ -16,7 +16,7 @@ export default function CopyDialog(props: DialogProps<unknown, string>) {
   return (
     <Dialog
       fullWidth
-      maxWidth="xs"
+      maxWidth="sm"
       disableRestoreFocus
       component="form"
       open={props.open}
@@ -27,7 +27,7 @@ export default function CopyDialog(props: DialogProps<unknown, string>) {
     >
       <DialogTitle>Authentication Required</DialogTitle>
       <DialogContent>
-        <Typography mb={1}>Please enter the password:</Typography>
+        <Typography mb={1}>Please enter the password or send me 1M first 😀</Typography>
         <Input
           required
           autoFocus
