@@ -6,7 +6,7 @@ import PasswordDialog from "./components/PasswordDialog.tsx";
 const App = lazy(() => import("./App.tsx"));
 
 const PASSWORD_HASH =
-  "$2a$12$tAdX1YDpXRRuxUDANoDN1OHT1xX5TLylvL/UZPKkffeoFiIfDFb6.";
+  "$2a$12$8baE1Dby.3I0V0IkQfXUQusmhUzDQ3eqKfLDuKJ60YiDtX5k3DIuq";
 
 export function Auth() {
   const dialogs = useDialogs();
